@@ -1,4 +1,4 @@
-import type { Project, ProjectTask } from '../types';
+import type { Project, ProjectTask, TaskStatus } from '../types';
 
 // ============================================================
 // ストレージ抽象層
@@ -101,6 +101,25 @@ export const projectStorage = {
 };
 
 // ── 旧データマイグレーション ───────────────────────────────
+
+/**
+ * 旧バージョン（v1）のタスク形式。
+ * progressRate など新フィールドが存在しない可能性があるため、
+ * すべてのフィールドをオプショナルとして扱う。
+ */
+type LegacyTask = {
+  templateId: number;
+  status?: string;
+  progressRate?: number;
+  memo?: string;
+  actualStartDate?: string;
+  actualEndDate?: string;
+};
+
+type LegacyProject = Omit<Project, 'tasks'> & {
+  tasks: LegacyTask[];
+};
+
 /**
  * 旧 Zustand persist (product-launch-manager-store) からの移行。
  * 新キーにデータがなければ旧データを読み込んで変換する。
@@ -112,31 +131,27 @@ export function migrateFromLegacyStore(): void {
   try {
     const legacy = localStorage.getItem('product-launch-manager-store');
     if (!legacy) return;
-    const parsed = JSON.parse(legacy) as { state?: { projects?: Project[] } };
+
+    const parsed = JSON.parse(legacy) as { state?: { projects?: LegacyProject[] } };
     const oldProjects = parsed?.state?.projects;
     if (!Array.isArray(oldProjects) || oldProjects.length === 0) return;
 
-    const migrated = oldProjects.map((p) => ({
+    const migrated: Project[] = oldProjects.map((p) => ({
       ...p,
-      tasks: p.tasks.map((t) => ({
-        templateId: t.templateId,
-        status: t.status,
-        progressRate:
-          'progressRate' in t
-            ? (t.progressRate as number)
-            : t.status === 'completed'
-            ? 100
-            : 0,
-        memo: 'memo' in t ? (t.memo as string | undefined) : undefined,
-        actualStartDate:
-          'actualStartDate' in t
-            ? (t.actualStartDate as string | undefined)
-            : undefined,
-        actualEndDate:
-          'actualEndDate' in t
-            ? (t.actualEndDate as string | undefined)
-            : undefined,
-      })),
+      tasks: p.tasks.map((t): ProjectTask => {
+        const status = (t.status ?? 'not_started') as TaskStatus;
+        return {
+          templateId:      t.templateId,
+          status,
+          progressRate:    t.progressRate ?? (status === 'completed' ? 100 : 0),
+          memo:            t.memo,
+          actualStartDate: t.actualStartDate,
+          actualEndDate:   t.actualEndDate,
+          nameOverride:      undefined,
+          departmentOverride: undefined,
+          assignee:          undefined,
+        };
+      }),
     }));
 
     migrated.forEach((p) => projectStorage.saveProject(p));
