@@ -1,11 +1,13 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useProjectStore } from '../store/useProjectStore';
 
 export function Layout() {
   const { projects } = useProjectStore();
+  const navigate = useNavigate();
 
   return (
     <div className="app-layout">
+      {/* ── デスクトップ用サイドバー ── */}
       <aside className="sidebar">
         <div className="sidebar-logo">
           <h1>新商品<br />進捗管理</h1>
@@ -62,9 +64,38 @@ export function Layout() {
         </div>
       </aside>
 
+      {/* ── コンテンツ ── */}
       <div className="main-content">
         <Outlet />
       </div>
+
+      {/* ── スマホ用ボトムナビ ── */}
+      <nav className="mobile-nav">
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) => `mobile-nav-link${isActive ? ' active' : ''}`}
+        >
+          <span className="mobile-nav-icon">📊</span>
+          <span>ダッシュボード</span>
+        </NavLink>
+
+        <NavLink
+          to="/projects"
+          className={({ isActive }) => `mobile-nav-link${isActive ? ' active' : ''}`}
+        >
+          <span className="mobile-nav-icon">📋</span>
+          <span>案件一覧</span>
+        </NavLink>
+
+        <button
+          className="mobile-nav-link"
+          onClick={() => navigate('/projects/new')}
+        >
+          <span className="mobile-nav-icon">＋</span>
+          <span>新規登録</span>
+        </button>
+      </nav>
     </div>
   );
 }
