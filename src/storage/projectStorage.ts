@@ -100,6 +100,39 @@ export const projectStorage = {
   },
 };
 
+// ── エクスポート / インポート ──────────────────────────────
+
+/**
+ * 全データを JSON 文字列にシリアライズして返す（エクスポート用）。
+ * この JSON をファイルに保存し、別デバイスで importAllData() に渡すことで
+ * デバイス間のデータ共有が可能になる。
+ */
+export function exportAllData(): string {
+  const projects = projectStorage.loadAll();
+  return JSON.stringify(projects, null, 2);
+}
+
+/**
+ * JSON 文字列から全データを復元する（インポート用）。
+ * 既存の plm:* キーをすべて削除してから上書きする。
+ * ※ 呼び出し後は window.location.reload() でストアを再初期化すること。
+ */
+export function importAllData(jsonString: string): void {
+  const projects = JSON.parse(jsonString) as Project[];
+  if (!Array.isArray(projects)) throw new Error('Invalid format');
+
+  // 既存の plm: キーをすべて削除
+  const keysToRemove: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key?.startsWith('plm:')) keysToRemove.push(key);
+  }
+  keysToRemove.forEach((k) => localStorage.removeItem(k));
+
+  // 新データを書き込む
+  projects.forEach((p) => projectStorage.saveProject(p));
+}
+
 // ── 旧データマイグレーション ───────────────────────────────
 
 /**

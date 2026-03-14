@@ -48,6 +48,14 @@ export function Layout() {
               </span>
             )}
           </NavLink>
+
+          <NavLink
+            to="/data"
+            className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
+          >
+            <span className="icon">🔄</span>
+            データ共有
+          </NavLink>
         </nav>
 
         <div
@@ -86,6 +94,14 @@ export function Layout() {
         >
           <span className="mobile-nav-icon">📋</span>
           <span>案件一覧</span>
+        </NavLink>
+
+        <NavLink
+          to="/data"
+          className={({ isActive }) => `mobile-nav-link${isActive ? ' active' : ''}`}
+        >
+          <span className="mobile-nav-icon">🔄</span>
+          <span>データ共有</span>
         </NavLink>
 
         <button

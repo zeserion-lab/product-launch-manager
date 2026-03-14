@@ -4,6 +4,7 @@ import { Dashboard } from './pages/Dashboard';
 import { ProjectList } from './pages/ProjectList';
 import { ProjectDetail } from './pages/ProjectDetail';
 import { NewProject } from './pages/NewProject';
+import { DataSync } from './pages/DataSync';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="projects" element={<ProjectList />} />
           <Route path="projects/new" element={<NewProject />} />
           <Route path="projects/:id" element={<ProjectDetail />} />
+          <Route path="data" element={<DataSync />} />
         </Route>
       </Routes>
     </BrowserRouter>

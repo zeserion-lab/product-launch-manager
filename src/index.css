@@ -936,6 +936,58 @@ button { cursor: pointer; font-family: inherit; font-size: var(--font-size-base)
 .empty-state .icon  { font-size: 38px; margin-bottom: 12px; }
 .empty-state p      { font-size: var(--font-size-md); margin-bottom: 16px; }
 
+/* ── データ同期ページ ─────────────────────────────────────── */
+.sync-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sync-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.sync-step:last-child { border-bottom: none; }
+
+.sync-step-no {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.sync-step-body { flex: 1; }
+
+.sync-step-title {
+  font-weight: 700;
+  font-size: var(--font-size-md);
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.sync-step-desc {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.sync-step-arrow {
+  text-align: center;
+  font-size: 18px;
+  color: var(--text-muted);
+  padding: 2px 0 2px 14px;
+}
+
 /* ============================================================
    スマホ対応 — モバイルナビ（デスクトップでは非表示）
    ============================================================ */
