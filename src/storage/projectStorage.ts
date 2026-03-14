@@ -1,0 +1,146 @@
+import type { Project, ProjectTask } from '../types';
+
+// ============================================================
+// ストレージ抽象層
+//
+// 設計意図:
+//   - project メタ情報と tasks を分離して保存することで、
+//     将来のDB化（REST API化）を最小変更で実現できる。
+//   - この関数群をAPIコール実装に差し替えるだけでDB化が完了する。
+//
+// localStorage キー設計:
+//   plm:projects          → ProjectMeta[] (tasks を持たないProject)
+//   plm:tasks:{projectId} → ProjectTask[]
+//
+// DB化するときに差し替える箇所: この1ファイルのみ
+// ============================================================
+
+const STORAGE_KEYS = {
+  PROJECTS: 'plm:projects',
+  tasks: (id: string) => `plm:tasks:${id}`,
+} as const;
+
+/** タスクを含まない案件メタ情報 */
+type ProjectMeta = Omit<Project, 'tasks'>;
+
+// ── ヘルパー ───────────────────────────────────────────────
+
+function readJSON<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeJSON(key: string, value: unknown): void {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+// ── 公開API ───────────────────────────────────────────────
+
+export const projectStorage = {
+  /**
+   * 全案件（タスク込み）をロードする。
+   * DB化時: GET /api/projects と GET /api/projects/:id/tasks に差し替え
+   */
+  loadAll(): Project[] {
+    const metas = readJSON<ProjectMeta[]>(STORAGE_KEYS.PROJECTS, []);
+    return metas.map((meta) => ({
+      ...meta,
+      tasks: projectStorage.loadTasks(meta.id),
+    }));
+  },
+
+  /**
+   * 特定案件のタスクをロードする。
+   * DB化時: GET /api/projects/:id/tasks に差し替え
+   */
+  loadTasks(projectId: string): ProjectTask[] {
+    return readJSON<ProjectTask[]>(STORAGE_KEYS.tasks(projectId), []);
+  },
+
+  /**
+   * 案件を保存（メタ情報とタスクを分離して保存）。
+   * DB化時: PUT /api/projects/:id + PUT /api/projects/:id/tasks に差し替え
+   */
+  saveProject(project: Project): void {
+    const { tasks, ...meta } = project;
+    const metas = readJSON<ProjectMeta[]>(STORAGE_KEYS.PROJECTS, []);
+    const idx = metas.findIndex((m) => m.id === project.id);
+    if (idx >= 0) {
+      metas[idx] = meta;
+    } else {
+      metas.push(meta);
+    }
+    writeJSON(STORAGE_KEYS.PROJECTS, metas);
+    writeJSON(STORAGE_KEYS.tasks(project.id), tasks);
+  },
+
+  /**
+   * タスクのみを更新する（案件メタ情報は変更しない）。
+   * DB化時: PATCH /api/projects/:id/tasks/:templateId に差し替え
+   */
+  saveTasks(projectId: string, tasks: ProjectTask[]): void {
+    writeJSON(STORAGE_KEYS.tasks(projectId), tasks);
+  },
+
+  /**
+   * 案件を削除する。
+   * DB化時: DELETE /api/projects/:id に差し替え
+   */
+  deleteProject(projectId: string): void {
+    const metas = readJSON<ProjectMeta[]>(STORAGE_KEYS.PROJECTS, []);
+    writeJSON(
+      STORAGE_KEYS.PROJECTS,
+      metas.filter((m) => m.id !== projectId)
+    );
+    localStorage.removeItem(STORAGE_KEYS.tasks(projectId));
+  },
+};
+
+// ── 旧データマイグレーション ───────────────────────────────
+/**
+ * 旧 Zustand persist (product-launch-manager-store) からの移行。
+ * 新キーにデータがなければ旧データを読み込んで変換する。
+ */
+export function migrateFromLegacyStore(): void {
+  const existing = readJSON<ProjectMeta[]>(STORAGE_KEYS.PROJECTS, []);
+  if (existing.length > 0) return; // 新データあり → スキップ
+
+  try {
+    const legacy = localStorage.getItem('product-launch-manager-store');
+    if (!legacy) return;
+    const parsed = JSON.parse(legacy) as { state?: { projects?: Project[] } };
+    const oldProjects = parsed?.state?.projects;
+    if (!Array.isArray(oldProjects) || oldProjects.length === 0) return;
+
+    const migrated = oldProjects.map((p) => ({
+      ...p,
+      tasks: p.tasks.map((t) => ({
+        templateId: t.templateId,
+        status: t.status,
+        progressRate:
+          'progressRate' in t
+            ? (t.progressRate as number)
+            : t.status === 'completed'
+            ? 100
+            : 0,
+        memo: 'memo' in t ? (t.memo as string | undefined) : undefined,
+        actualStartDate:
+          'actualStartDate' in t
+            ? (t.actualStartDate as string | undefined)
+            : undefined,
+        actualEndDate:
+          'actualEndDate' in t
+            ? (t.actualEndDate as string | undefined)
+            : undefined,
+      })),
+    }));
+
+    migrated.forEach((p) => projectStorage.saveProject(p));
+  } catch {
+    // マイグレーション失敗は無視
+  }
+}

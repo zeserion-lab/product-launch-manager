@@ -1,0 +1,403 @@
+import type { TaskTemplate } from '../types';
+
+/**
+ * 標準タスクテンプレート（41工程）
+ * 出典: 新商品フロー(251222)-２発売日.xlsx「新商品フロー」シート
+ *
+ * isMilestone: true = 重要マイルストーン工程（Go/No-Go・発注承認・製造開始等）
+ * マイルストーン: No.4, 9, 13, 23, 25, 30, 35, 41
+ */
+export const TASK_TEMPLATES: TaskTemplate[] = [
+  // ── フェーズ1: 企画 ────────────────────────────────
+  {
+    id: 1, phase: '1.企画',
+    name: '市場調査（ニーズ・競合等）',
+    department: '販売戦略',
+    predecessorTaskId: null,
+    standardDuration: '2週間', days: 14,
+    notes: '既存データ流用可なら期間短縮検討',
+    isMilestone: false,
+  },
+  {
+    id: 2, phase: '1.企画',
+    name: 'コンセプト策定・評価基準設定',
+    department: '販売戦略・グローバル',
+    predecessorTaskId: 1,
+    standardDuration: '1週間', days: 7,
+    notes: 'ターゲット層・想定売価レンジの設定',
+    isMilestone: false,
+  },
+  {
+    id: 3, phase: '1.企画',
+    name: 'コンセプト提案・プロトタイプ可否判断',
+    department: '販売戦略',
+    predecessorTaskId: 2,
+    standardDuration: '3日', days: 3,
+    notes: '類似品の特許・意匠簡易チェック推奨',
+    isMilestone: false,
+  },
+  {
+    id: 4, phase: '1.企画',
+    name: 'デザイン作成・プロトタイピング',
+    department: 'グローバル・ブランド',
+    predecessorTaskId: 3,
+    standardDuration: '2週間', days: 14,
+    notes: 'パッケージ案・ロゴ規定の確認含む',
+    isMilestone: true,  // 企画フェーズ完了マイルストーン
+  },
+
+  // ── フェーズ2: 試作 ────────────────────────────────
+  {
+    id: 5, phase: '2.試作',
+    name: '試作品作成・入荷対応',
+    department: 'グローバル',
+    predecessorTaskId: 4,
+    standardDuration: '3週間', days: 21,
+    notes: '製造リードタイム要確認（春節等考慮）',
+    isMilestone: false,
+  },
+  {
+    id: 6, phase: '2.試作',
+    name: '試作品評価・判断',
+    department: '販売戦略・グローバル',
+    predecessorTaskId: 5,
+    standardDuration: '3日', days: 3,
+    notes: '安全性・機能性が基準に達しているか',
+    isMilestone: false,
+  },
+  {
+    id: 7, phase: '2.試作',
+    name: 'ビーズ量検討（テスト充填）',
+    department: 'ロジスティクス',
+    predecessorTaskId: 5,
+    standardDuration: '1週間', days: 7,
+    notes: '充填率・へたり想定の確認',
+    isMilestone: false,
+  },
+  {
+    id: 8, phase: '2.試作',
+    name: 'ユーザーテスト・改良検討',
+    department: '販売戦略',
+    predecessorTaskId: 6,
+    standardDuration: '1〜2週間', days: 14,
+    notes: 'モニター選定・フィードバック収集',
+    isMilestone: false,
+  },
+  {
+    id: 9, phase: '2.試作',
+    name: '商品販売可否 最終判断',
+    department: '販売戦略',
+    predecessorTaskId: 8,
+    standardDuration: '1日', days: 1,
+    notes: 'Go/No-Go判断 ★次フェーズへの分岐点',
+    isMilestone: true,  // Go/No-Goマイルストーン
+  },
+
+  // ── フェーズ3: 仕様 ────────────────────────────────
+  {
+    id: 10, phase: '3.仕様',
+    name: '仕様書策定・コスト試算Ⅰ',
+    department: 'ロジスティクス・グローバル',
+    predecessorTaskId: 9,
+    standardDuration: '随時', days: 1,
+    notes: '為替レートのバッファを含めること',
+    isMilestone: false,
+  },
+  {
+    id: 11, phase: '3.仕様',
+    name: '品質試験依頼（公的機関）',
+    department: 'ロジスティクス',
+    predecessorTaskId: 10,
+    standardDuration: '1週間', days: 7,
+    notes: 'カケン・ボーケン等。不合格時は要再設計',
+    isMilestone: false,
+  },
+  {
+    id: 12, phase: '3.仕様',
+    name: 'プライス確定・販売計画策定',
+    department: 'グローバル・販売戦略',
+    predecessorTaskId: 10,
+    standardDuration: '3日', days: 3,
+    notes: '粗利率・原価率の最終確認',
+    isMilestone: false,
+  },
+  {
+    id: 13, phase: '3.仕様',
+    name: '最終MTG（商品名・価格決定）',
+    department: '全関係部署・役員',
+    predecessorTaskId: 12,
+    standardDuration: '2〜3週間', days: 21,
+    notes: 'ここからフェーズ4へ ★商品名・価格確定',
+    isMilestone: true,  // 仕様確定マイルストーン
+  },
+
+  // ── フェーズ4: 登録 ────────────────────────────────
+  {
+    id: 14, phase: '4.登録',
+    name: 'ライセンス契約書',
+    department: '販売戦略',
+    predecessorTaskId: 9,
+    standardDuration: '1日', days: 1,
+    notes: '版権元監修（承認）が必要な場合あり',
+    isMilestone: false,
+  },
+  {
+    id: 15, phase: '4.登録',
+    name: '新商品情報シート作成',
+    department: '販売戦略',
+    predecessorTaskId: 13,
+    standardDuration: '3日', days: 3,
+    notes: 'EC・カタログ用スペック情報の確定',
+    isMilestone: false,
+  },
+  {
+    id: 16, phase: '4.登録',
+    name: 'ケアラベル作成・デザイン',
+    department: 'ロジスティクス・デザイン',
+    predecessorTaskId: 13,
+    standardDuration: '1日', days: 1,
+    notes: 'No.11の結果（JIS洗濯表示）反映必須',
+    isMilestone: false,
+  },
+  {
+    id: 17, phase: '4.登録',
+    name: 'システム登録依頼シート記入',
+    department: '販売戦略',
+    predecessorTaskId: 15,
+    standardDuration: '1〜2週間', days: 14,
+    notes: '登録期限の厳守（遅れると発注不可）',
+    isMilestone: false,
+  },
+  {
+    id: 18, phase: '4.登録',
+    name: '商品コード発行',
+    department: '情報会計システム',
+    predecessorTaskId: 17,
+    standardDuration: '1週間', days: 7,
+    notes: '',
+    isMilestone: false,
+  },
+  {
+    id: 19, phase: '4.登録',
+    name: 'JANコード発行',
+    department: '情報会計システム',
+    predecessorTaskId: 18,
+    standardDuration: '1〜3日', days: 3,
+    notes: 'システム自動発行',
+    isMilestone: false,
+  },
+  {
+    id: 20, phase: '4.登録',
+    name: '各マスタ登録(NE・スマレジ・Harbor)',
+    department: '情報会計システム',
+    predecessorTaskId: 19,
+    standardDuration: '1週間', days: 7,
+    notes: '連携システム間のデータ整合性確認',
+    isMilestone: false,
+  },
+  {
+    id: 21, phase: '4.登録',
+    name: 'RFIDタグ発注',
+    department: '販売戦略',
+    predecessorTaskId: 19,
+    standardDuration: '2週間', days: 14,
+    notes: 'JAN・EPCデータのエンコード指定',
+    isMilestone: false,
+  },
+  {
+    id: 22, phase: '4.登録',
+    name: 'ロジ部がLLCへの発注書作成',
+    department: 'ロジスティクス',
+    predecessorTaskId: 20,
+    standardDuration: '3日', days: 3,
+    notes: '稟議申請（No.23）の添付資料として作成',
+    isMilestone: false,
+  },
+  {
+    id: 23, phase: '4.登録',
+    name: '発注申請・稟議承認',
+    department: '販売戦略',
+    predecessorTaskId: 22,
+    standardDuration: '15日', days: 15,
+    notes: '予算枠の確認（ボトルネック）★製造開始の鍵',
+    isMilestone: true,  // 発注承認マイルストーン
+  },
+
+  // ── フェーズ5: 製造 ────────────────────────────────
+  {
+    id: 24, phase: '5.製造',
+    name: '本発注書を工場に連絡',
+    department: 'グローバル',
+    predecessorTaskId: 23,
+    standardDuration: '1日', days: 1,
+    notes: '',
+    isMilestone: false,
+  },
+  {
+    id: 25, phase: '5.製造',
+    name: '製造',
+    department: '海外工場',
+    predecessorTaskId: 24,
+    standardDuration: '1.0〜1.5ヶ月', days: 45,
+    notes: '工場QC立会い・中間検査の要否',
+    isMilestone: true,  // 製造フェーズ最長工程
+  },
+  {
+    id: 26, phase: '5.製造',
+    name: '本生産サンプル入手',
+    department: 'ロジスティクス',
+    predecessorTaskId: 25,
+    standardDuration: '3日', days: 3,
+    notes: '限度見本（QC基準）として保管',
+    isMilestone: false,
+  },
+  {
+    id: 27, phase: '5.製造',
+    name: '食品衛生法試験依頼',
+    department: 'ロジスティクス',
+    predecessorTaskId: 26,
+    standardDuration: '2〜3週間', days: 21,
+    notes: '乳幼児・食器類等の場合必須（通関書類）',
+    isMilestone: false,
+  },
+  {
+    id: 28, phase: '5.製造',
+    name: '輸入商品の箱サイズ共有',
+    department: 'グローバル',
+    predecessorTaskId: 24,
+    standardDuration: '1日', days: 1,
+    notes: 'トラックチャーター手配に使用',
+    isMilestone: false,
+  },
+  {
+    id: 29, phase: '5.製造',
+    name: '輸入後の国内付帯作業の有無',
+    department: '販売戦略',
+    predecessorTaskId: 28,
+    standardDuration: '1日', days: 1,
+    notes: '国内段取り（場所・人員）に使用',
+    isMilestone: false,
+  },
+  {
+    id: 30, phase: '5.製造',
+    name: '輸入(ETD)',
+    department: 'ロジスティクス',
+    predecessorTaskId: 25,
+    standardDuration: '2週間', days: 14,
+    notes: 'Invoice/Packing List/B/L手配',
+    isMilestone: true,  // 輸入完了マイルストーン
+  },
+
+  // ── フェーズ6: 準備 ────────────────────────────────
+  {
+    id: 31, phase: '6.準備',
+    name: '倉庫入庫',
+    department: 'シンワ・アクティブ',
+    predecessorTaskId: 30,
+    standardDuration: '1日', days: 1,
+    notes: 'デバンニング',
+    isMilestone: false,
+  },
+  {
+    id: 32, phase: '6.準備',
+    name: '倉庫積持（検品・棚入・付帯作業）',
+    department: 'スクロール',
+    predecessorTaskId: 31,
+    standardDuration: '1日', days: 1,
+    notes: 'ラベル貼付・セット組等の流通加工',
+    isMilestone: false,
+  },
+  {
+    id: 33, phase: '6.準備',
+    name: 'NE起票（店舗販売数）',
+    department: 'ロジスティクス',
+    predecessorTaskId: 32,
+    standardDuration: '1日', days: 1,
+    notes: '配送手配のトリガー（在庫引当）',
+    isMilestone: false,
+  },
+  {
+    id: 34, phase: '6.準備',
+    name: '出荷依頼',
+    department: 'ロジスティクス',
+    predecessorTaskId: 33,
+    standardDuration: '1〜2週間', days: 14,
+    notes: '路線便・チャーター便の確定',
+    isMilestone: false,
+  },
+  {
+    id: 35, phase: '6.準備',
+    name: '店舗へ出荷',
+    department: 'ロジスティクス',
+    predecessorTaskId: 34,
+    standardDuration: '1日', days: 1,
+    notes: '物流リードタイム（遠隔地は+数日）',
+    isMilestone: true,  // 出荷完了マイルストーン
+  },
+  {
+    id: 36, phase: '6.準備',
+    name: 'ストア設定依頼',
+    department: 'ストアリテール',
+    predecessorTaskId: 20,
+    standardDuration: '1〜2日', days: 2,
+    notes: 'POSレジ画面への反映確認',
+    isMilestone: false,
+  },
+  {
+    id: 37, phase: '6.準備',
+    name: '店舗在庫登録依頼',
+    department: 'ストアリテール',
+    predecessorTaskId: 36,
+    standardDuration: '1〜2日', days: 2,
+    notes: '入庫データのシステム反映待ち',
+    isMilestone: false,
+  },
+  {
+    id: 38, phase: '6.準備',
+    name: '販売方法レクチャー準備',
+    department: 'ストアリテール',
+    predecessorTaskId: 36,
+    standardDuration: '5日', days: 5,
+    notes: '接客トーク・注意点マニュアル展開',
+    isMilestone: false,
+  },
+  {
+    id: 39, phase: '6.準備',
+    name: '店内展示・タグ取付',
+    department: 'ストアリテール',
+    predecessorTaskId: 35,
+    standardDuration: '1日', days: 1,
+    notes: '棚割（VMD）指示・プライスカード設置',
+    isMilestone: false,
+  },
+  {
+    id: 40, phase: '6.準備',
+    name: 'ストアお知らせ発信',
+    department: 'ストアリテール',
+    predecessorTaskId: 35,
+    standardDuration: '当日/前日', days: 1,
+    notes: 'アプリ・SNS・メルマガ配信予約',
+    isMilestone: false,
+  },
+
+  // ── GOAL ────────────────────────────────────────────
+  {
+    id: 41, phase: 'GOAL',
+    name: '新商品販売開始',
+    department: 'ストアリテール',
+    predecessorTaskId: 39,
+    standardDuration: 'GOAL', days: 1,
+    notes: 'プロジェクト完了（初速分析へ）',
+    isMilestone: true,
+  },
+];
+
+export const PHASE_ORDER: string[] = [
+  '1.企画', '2.試作', '3.仕様', '4.登録', '5.製造', '6.準備', 'GOAL',
+];
+
+/** フェーズ表示名（バッジ用省略形） */
+export const PHASE_SHORT: Record<string, string> = {
+  '1.企画': '企画', '2.試作': '試作', '3.仕様': '仕様',
+  '4.登録': '登録', '5.製造': '製造', '6.準備': '準備', GOAL: 'GOAL',
+};
