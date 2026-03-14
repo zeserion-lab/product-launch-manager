@@ -1,0 +1,9 @@
+# すべてのテキストファイルの行末を LF に統一（Vercel/Linux 環境対応）
+* text=auto eol=lf
+
+# バイナリファイルは変換しない
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.ico  binary
+*.svg  binary
