@@ -1,18 +1,23 @@
 # 新商品進捗管理システム
-### Product Launch Manager
-
-> 発売日を入力するだけで、企画〜発売まで **全41工程の日程を自動逆算**。  
-> 遅延検知・ガントチャート・フィルター付きの業務向けWebアプリ。
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USERNAME/product-launch-manager)
+**Product Launch Manager**
 
 ---
 
-## 画面イメージ
+## このアプリの目的
 
-| ダッシュボード | 案件詳細（タスク一覧） | ガントチャート |
-|---|---|---|
-| KPI・要注意タスク | フィルター・インライン編集 | フェーズ別タイムライン |
+新商品の開発は、企画・試作・仕様・登録・製造・準備と複数の部署にまたがる複雑なプロジェクトです。  
+このアプリは **「発売日を入力するだけで、全41工程の予定日程を自動計算」** し、  
+誰が何をいつまでにやるべきかを一目で把握できるようにします。
+
+**解決する課題**
+- 発売日が変わるたびに Excel を手直しする手間をなくす
+- 遅延しているタスクを見逃さないようにする
+- 案件の全体像をチームで共有しやすくする
+
+**想定利用者**
+- 新商品プロジェクトのオーナー・PM
+- 進捗報告をまとめるチームリーダー
+- 各フェーズを担当する部署（販売戦略・グローバル・ロジスティクス・情報会計システム等）
 
 ---
 
@@ -20,212 +25,144 @@
 
 | 機能 | 概要 |
 |---|---|
-| **発売日逆算** | 発売日を入力 → 全41工程の予定日程を自動計算（総リードタイム233日） |
+| **発売日逆算** | 発売日を入力 → 全41工程の予定日程を自動計算（リードタイム233日） |
 | **進捗管理** | ステータス5段階・進捗率・実績日付・担当者・メモをタスクごとに記録 |
-| **遅延検知** | 予定完了日を超えた未完了タスクを自動赤色ハイライト |
-| **フィルター検索** | キーワード・フェーズ・担当部署・ステータス・遅延/重要工程で絞込 |
-| **ガントチャート** | 全工程をフェーズ別横断タイムライン表示（今日ライン付き） |
-| **タスク追加・削除** | 標準41工程にカスタムタスクを追加/非表示可能 |
-| **名称・部署の上書き** | テンプレートのタスク名・担当部署を案件単位で変更可能 |
-| **担当者名記入** | タスクごとに担当者名を記録・検索対象に含む |
-| **複数案件対応** | 案件ごとに独立管理。ダッシュボードで横断比較 |
-| **データ永続化** | ブラウザの localStorage に自動保存 |
+| **遅延検知** | 予定完了日を過ぎた未完了タスクを自動で赤色ハイライト |
+| **タスク一覧** | フェーズ・部署・ステータス・遅延/重要工程でフィルター＆検索 |
+| **フェーズ別進捗** | 企画〜準備まで各フェーズの進捗率をグラフ表示 |
+| **ガントチャート** | 全工程をフェーズ別タイムラインで横断表示（今日ライン付き） |
+| **タスク追加・削除** | 標準41工程に加え、案件固有のカスタムタスクを追加・削除可能 |
+| **担当部署・担当者** | テンプレートの担当部署を案件単位で変更、担当者名を記入可能 |
+| **複数案件対応** | 案件ごとに独立管理。ダッシュボードで全案件を横断比較 |
+| **データ保存** | ブラウザの localStorage に自動保存（ネット不要・外部サービス不要） |
 
 ---
 
 ## ローカルで起動する
 
 ```bash
-# 1. リポジトリをクローン
-git clone https://github.com/YOUR_USERNAME/product-launch-manager.git
+# リポジトリをクローン
+git clone https://github.com/zeserion-lab/product-launch-manager.git
 cd product-launch-manager
 
-# 2. 依存関係をインストール
+# 依存パッケージをインストール
 npm install
 
-# 3. 開発サーバーを起動
+# 開発サーバーを起動
 npm run dev
-# → http://localhost:5173/
+# → ブラウザで http://localhost:5173/ を開く
 ```
 
-### 動作確認済み環境
+**ビルド確認（本番用）**
 
+```bash
+npm run build
+# → dist/ フォルダに出力される
+```
+
+**動作確認済み環境**
 - Node.js 18 以上
-- 主要ブラウザ最新版（Chrome / Edge / Firefox / Safari）
+- Chrome / Edge / Firefox / Safari（最新版）
 
 ---
 
-## Vercel にデプロイする
+## 公開 URL
 
-### 方法① GitHub 連携（推奨・無料）
-
-```bash
-# 1. このリポジトリを GitHub に Push する
-git init
-git add .
-git commit -m "initial commit"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/product-launch-manager.git
-git push -u origin main
-```
-
-1. [vercel.com](https://vercel.com) にサインイン（GitHubアカウントで可）
-2. **Add New Project** → GitHub リポジトリを選択
-3. Framework Preset: **Vite** を選択（自動検出されます）
-4. **Deploy** → 完了（1〜2分）
-
-以降は `git push` のたびに自動デプロイされます。
+| 環境 | URL |
+|---|---|
+| **本番（Vercel）** | https://product-launch-manager.vercel.app |
+| **GitHub** | https://github.com/zeserion-lab/product-launch-manager |
 
 ---
 
-### 方法② Vercel CLI
+## コードを更新して公開する手順
+
+**これが「次に触るときの基本フロー」です。**
 
 ```bash
-# Vercel CLI をインストール
-npm i -g vercel
+# 1. コードを修正する（Cursorで編集）
 
-# ログイン
-vercel login
-
-# デプロイ（初回）
-vercel --prod
-```
-
----
-
-### 方法③ Netlify（代替）
-
-```bash
-# ビルド
+# 2. ローカルでビルドが通るか確認
 npm run build
 
-# Netlify CLI でデプロイ
-npm i -g netlify-cli
-netlify deploy --prod --dir=dist
+# 3. 変更をコミット
+git add .
+git commit -m "変更内容のメモ"
+
+# 4. GitHubへ Push
+git push
+
+# → Vercel が自動検知して 1〜2分でデプロイ完了
+# → 公開URLを開いて確認
 ```
 
-または [netlify.com](https://netlify.com) の GUI でも `dist/` フォルダをドラッグ&ドロップするだけで公開できます。
+**確認ポイント**
+- `npm run build` がエラーなく完了するか
+- `git push` 後に Vercel ダッシュボードで「Build & Deployment」が成功しているか
+- 公開URLで意図した変更が反映されているか
 
 ---
 
-## Vercel の設定確認事項
+## 初回デプロイは DEPLOY.md を参照
 
-| 設定項目 | 値 |
-|---|---|
-| Framework Preset | Vite |
-| Build Command | `npm run build` |
-| Output Directory | `dist` |
-| Install Command | `npm install` |
-
-`vercel.json` に SPA ルーティング設定済みのため、追加設定は不要です。
+> Vercel への初回接続手順は [`DEPLOY.md`](./DEPLOY.md) にまとめています。
 
 ---
 
-## ディレクトリ構成
+## データの仕組み（localStorage）
+
+データはブラウザに保存されます。別のブラウザ・別のPCでは共有されません。
 
 ```
-product-launch-manager/
-├── public/                    # 静的アセット（favicon 等）
-├── src/
-│   ├── types/index.ts         # 型定義（Project / TaskTemplate / ProjectTask）
-│   ├── data/
-│   │   ├── taskTemplates.ts   # 標準41工程テンプレート
-│   │   └── sampleProject.ts   # 初期サンプルデータ
-│   ├── logic/
-│   │   ├── scheduleCalc.ts    # 発売日逆算ロジック（純粋関数）
-│   │   └── taskUtils.ts       # 遅延判定・集計・フィルター処理
-│   ├── storage/
-│   │   └── projectStorage.ts  # localStorage 抽象化層 ← DB化時の差し替え箇所
-│   ├── store/
-│   │   └── useProjectStore.ts # Zustand グローバルストア
-│   ├── components/            # 共通UIコンポーネント
-│   └── pages/                 # ページコンポーネント
-├── index.html
-├── vercel.json                # Vercel SPA ルーティング設定
-└── README.md
+保存先:
+  plm:projects          → 案件の基本情報（名前・発売日など）
+  plm:tasks:{projectId} → 案件ごとのタスク実績（ステータス・進捗率など）
 ```
+
+**注意:** ブラウザの「閲覧データを削除」を実行するとデータが消えます。  
+大事なデータは定期的にメモや別ファイルに控えることを推奨します。
 
 ---
 
-## データモデル
+## 今後の拡張案
 
-```
-TaskTemplate  ── 全案件共通の工程雛形（ソースコードに固定）
-     ↓ 参照
-ProjectTask   ── 案件固有の実績データ（localStorage: plm:tasks:{id}）
-     ↓ 合成
-ProjectTaskView ── UI表示用（計算済み日程・遅延フラグ・カスタムフラグ付き）
-
-Project       ── 案件メタ情報（localStorage: plm:projects）
-  ├── tasks[]          テンプレートタスクの実績
-  ├── customTasks[]    ユーザー追加タスク
-  └── hiddenTaskIds[]  非表示にしたテンプレートタスクID
-```
-
-### localStorage キー仕様
-
-```
-plm:projects          → 案件メタ情報の配列（tasks を含まない）
-plm:tasks:{projectId} → 案件ごとの ProjectTask[]
-```
-
----
-
-## 発売日逆算ロジック
-
-```
-各タスクのオフセット:
-  offsetStart = 先行タスクの offsetEnd
-  offsetEnd   = offsetStart + days
-
-企画開始日 = 発売日 − 233日（GOAL タスクの offsetEnd − 1）
-各タスク:
-  startDate = 企画開始日 + offsetStart
-  endDate   = 企画開始日 + offsetEnd − 1
-```
-
-**発売日を変更するだけで全41タスクの日程が自動再計算されます。**
-
----
-
-## 遅延判定ロジック
-
-```
-isAutoDelayed(endDate, status):
-  → status が completed / on_hold 以外 かつ
-    endDate < today（00:00:00） → 遅延と判定
-
-isEffectivelyDelayed:
-  → 上記 OR 手動ステータス 'delayed'
-```
-
----
-
-## 将来の拡張
-
-`src/storage/projectStorage.ts` の1ファイルを差し替えるだけで **REST API + DB化** が完了します。
-
-| 現在（localStorage） | DB化後（例） |
-|---|---|
-| `loadAll()` | `GET /api/projects` |
-| `saveProject(p)` | `PUT /api/projects/:id` |
-| `saveTasks(id, tasks)` | `PATCH /api/projects/:id/tasks` |
-| `deleteProject(id)` | `DELETE /api/projects/:id` |
+| 優先度 | 機能 | 概要 |
+|---|---|---|
+| 高 | バックエンドAPI化 | 複数人でリアルタイム共有。`src/storage/projectStorage.ts` を差し替えるだけで対応可能 |
+| 高 | 遅延アラート | 期限前にSlack/メールで自動通知 |
+| 中 | 部署別ビュー | 担当部署でフィルタリングした「自分の担当タスク」一覧 |
+| 中 | CSV/Excel出力 | 週報・報告書向けのデータエクスポート |
+| 低 | ユーザー認証 | 社内メンバーごとのアクセス制御 |
 
 ---
 
 ## 使用技術
 
-| ライブラリ | 用途 |
-|---|---|
-| React 19 + TypeScript | UI・型安全 |
-| Vite 8 | ビルドツール |
-| Zustand | 状態管理 |
-| date-fns | 日付計算 |
-| React Router v7 | クライアントルーティング |
+| ライブラリ | バージョン | 用途 |
+|---|---|---|
+| React | 19 | UIフレームワーク |
+| TypeScript | 5 | 型安全 |
+| Vite | 8 | ビルドツール |
+| Zustand | 5 | 状態管理 |
+| date-fns | 4 | 日付計算 |
+| React Router | 7 | ルーティング |
 
 ---
 
-## ライセンス
+## ディレクトリ構成（参考）
 
-MIT License — 社内運用・改変・再配布自由
+```
+src/
+├── types/index.ts          型定義（Project / TaskTemplate / ProjectTask）
+├── data/taskTemplates.ts   標準41工程テンプレート（変更したい場合はここ）
+├── logic/scheduleCalc.ts   発売日逆算ロジック
+├── logic/taskUtils.ts      遅延判定・集計・フィルター
+├── storage/projectStorage.ts  ← DB化するときにここを差し替える
+├── store/useProjectStore.ts   Zustand ストア
+├── components/             共通UIパーツ
+└── pages/                  各画面
+```
+
+---
+
+*MIT License — 社内運用・改変・再配布自由*
