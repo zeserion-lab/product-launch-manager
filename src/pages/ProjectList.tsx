@@ -7,8 +7,15 @@ import { buildProjectTaskViews, calcPlanningStartDate, formatDate } from '../log
 import { calcWeightedProgress, countDelayedTasks, daysUntilLaunch } from '../logic/taskUtils';
 
 export function ProjectList() {
-  const { projects } = useProjectStore();
+  const { projects, deleteProject } = useProjectStore();
   const navigate = useNavigate();
+
+  const handleDelete = (e: React.MouseEvent, projectId: string, projectName: string) => {
+    e.stopPropagation();
+    if (window.confirm(`「${projectName}」を削除しますか？\nタスクのデータも含めてすべて削除されます。この操作は元に戻せません。`)) {
+      deleteProject(projectId);
+    }
+  };
 
   const rows = useMemo(
     () =>
@@ -62,7 +69,7 @@ export function ProjectList() {
                     <th>完了 / 合計</th>
                     <th>遅延タスク</th>
                     <th style={{ minWidth: 180 }}>全体進捗</th>
-                    <th style={{ width: 70 }}></th>
+                    <th style={{ width: 100 }}></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -114,12 +121,21 @@ export function ProjectList() {
                         <ProgressBar value={progress} />
                       </td>
                       <td>
-                        <button
-                          className="btn btn-outline btn-sm"
-                          onClick={(e) => { e.stopPropagation(); navigate(`/projects/${project.id}`); }}
-                        >
-                          詳細
-                        </button>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <button
+                            className="btn btn-outline btn-sm"
+                            onClick={(e) => { e.stopPropagation(); navigate(`/projects/${project.id}`); }}
+                          >
+                            詳細
+                          </button>
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={(e) => handleDelete(e, project.id, project.name)}
+                            title="案件を削除"
+                          >
+                            🗑
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

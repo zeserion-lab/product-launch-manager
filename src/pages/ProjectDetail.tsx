@@ -46,6 +46,7 @@ export function ProjectDetail() {
     updateTask, updateTaskStatus, updateLaunchDate,
     hideTask, restoreTask,
     addCustomTask, updateCustomTask, deleteCustomTask,
+    deleteProject,
   } = useProjectStore();
 
   const [activeTab, setActiveTab]         = useState<ActiveTab>('tasks');
@@ -57,6 +58,14 @@ export function ProjectDetail() {
   const [launchDateInput, setLaunchDateInput]     = useState('');
 
   const project = projects.find((p) => p.id === id);
+
+  const handleDeleteProject = () => {
+    if (!project) return;
+    if (window.confirm(`「${project.name}」を削除しますか？\nタスクのデータも含めてすべて削除されます。この操作は元に戻せません。`)) {
+      deleteProject(project.id);
+      navigate('/projects');
+    }
+  };
 
   const hiddenTaskIds = project?.hiddenTaskIds ?? [];
   const customTasks   = project?.customTasks   ?? [];
@@ -196,6 +205,9 @@ export function ProjectDetail() {
           )}
           <button className="btn btn-outline btn-sm" onClick={() => navigate('/projects')}>
             ← 一覧
+          </button>
+          <button className="btn btn-danger btn-sm" onClick={handleDeleteProject}>
+            🗑 案件を削除
           </button>
         </div>
       </div>
